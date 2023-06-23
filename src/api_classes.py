@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 
 import requests
 
+from src.main import *
+
 
 class API(ABC):
 
@@ -47,20 +49,22 @@ class HeadHunterAPI(API):
             vacancy_url = vacancy.get("alternate_url")
             company_name = vacancy.get("employer").get("name")
             work_place = vacancy.get("area").get("name")
-            salary_from = vacancy.get("salary").get("from") if not None else 0
-            salary_to = vacancy.get("salary").get("to") if not None else 0
+            salary_from = vacancy.get("salary").get("from")
+
+            if salary_from is None:
+                salary_from = 0
+
+            salary_to = vacancy.get("salary").get("to")
+
+            if salary_to is None:
+                salary_to = 0
             salary_currency = vacancy.get("salary").get("currency")
+
             experience = vacancy.get("experience").get("name")
 
-            # return title, vacancy_url, company_name, work_place, salary_from, salary_to, salary_currency, experience
-
-            print(f"Компания: {company_name}")
-            print(f"Вакансия: {title}")
-            print(f"Зарплата: от {salary_from} до {salary_to} {salary_currency}")
-            print(f"Опыт: {experience}")
-            print(f"Город: {work_place}")
-            print(f"Ссылка на вакансию: {vacancy_url}")
-            # print(vacancy)
+            vac = Vacancy(title, vacancy_url, company_name, work_place,
+                          salary_from, salary_to, salary_currency, experience)
+            print(vac)
             print("----------------------------------------------------------------------------")
 
 
@@ -101,27 +105,22 @@ class SuperJobAPI(API):
             salary_currency = vacancy.get("currency")
             experience = vacancy.get("experience").get("title")
 
-            # return title, vacancy_url, company_name, work_place, salary_from, salary_to, salary_currency, experience
+            vac = Vacancy(title, vacancy_url, company_name, work_place,
+                          salary_from, salary_to, salary_currency, experience)
+            print(vac)
 
-            print(f"Компания: {company_name}")
-            print(f"Вакансия: {title}")
-            print(f"Зарплата: от {salary_from} до {salary_to} {salary_currency}")
-            print(f"Опыт: {experience}")
-            print(f"Город: {work_place}")
-            print(f"Ссылка на вакансию: {vacancy_url}")
+            question_about_add_vacancy(vac)
             print("----------------------------------------------------------------------------------------------")
 
 
 if __name__ == '__main__':
-
-    print("---------------------------HeadHunter----------------------------------")
+    print("--------------------------------------------HeadHunter--------------------------------------------------")
     hh_example = HeadHunterAPI()
 
     hh_example.get_vacancy_info(hh_example.search_vacancies("Python Developer Москва", 10))
 
     print()
-    print("---------------------------SuperJob----------------------------------")
-    print()
+    print("---------------------------------------------SuperJob---------------------------------------------------")
 
     sj_example = SuperJobAPI()
 
