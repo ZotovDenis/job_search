@@ -108,8 +108,6 @@ class SuperJobAPI(API):
             vac = Vacancy(title, vacancy_url, company_name, work_place,
                           salary_from, salary_to, salary_currency, experience)
             print(vac)
-
-            question_about_add_vacancy(vac)
             print("----------------------------------------------------------------------------------------------")
 
 
