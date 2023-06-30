@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 
 import requests
 
-from src.main import *
+from json_saver_class import JSONSaver
+from vacancy_class import Vacancy
 
 
 class API(ABC):
@@ -25,13 +26,13 @@ class HeadHunterAPI(API):
     hh_base_url = 'https://api.hh.ru/vacancies'
 
     def search_vacancies(self, keyword, quantity=15, page=1):
-        """Подключаемся к API HeadHunter"""
+        """Подключение к API HeadHunter"""
 
         url = "https://api.hh.ru/vacancies"
         params = {
             "text": keyword,  # Ключевое слово
             "per_page": quantity,  # Количество вакансий для вывода
-            "only_with_salary": 'true'
+            "only_with_salary": 'true'  # Только с информацией по зарплате
         }
 
         response = requests.get(url, params=params)
@@ -47,6 +48,7 @@ class HeadHunterAPI(API):
         for vacancy in vacancies:
             title = vacancy.get("name")
             vacancy_url = vacancy.get("alternate_url")
+            vacancy_id = vacancy.get("id")
             company_name = vacancy.get("employer").get("name")
             work_place = vacancy.get("area").get("name")
             salary_from = vacancy.get("salary").get("from")
@@ -58,14 +60,23 @@ class HeadHunterAPI(API):
 
             if salary_to is None:
                 salary_to = 0
+
             salary_currency = vacancy.get("salary").get("currency")
-
             experience = vacancy.get("experience").get("name")
+            description = vacancy.get("snippet").get("requirement")
 
-            vac = Vacancy(title, vacancy_url, company_name, work_place,
-                          salary_from, salary_to, salary_currency, experience)
+            vac = Vacancy(title, vacancy_url, vacancy_id, company_name, work_place,
+                          salary_from, salary_to, salary_currency, experience, description)
+            print("----------------------------------------------------------------------------------------------")
             print(vac)
-            print("----------------------------------------------------------------------------")
+            user_answer = input("Добавить вакансию? (ДА/НЕТ) ").lower()
+            if user_answer == "да" or user_answer == "yes" or user_answer == "lf":
+                my_object = JSONSaver()
+                my_object.add_vacancy(vac.info)
+            elif user_answer == "стоп" or user_answer == "stop":
+                break
+            else:
+                continue
 
 
 class SuperJobAPI(API):
@@ -75,12 +86,11 @@ class SuperJobAPI(API):
     api_key: str = os.getenv('SJ_API_KEY')
 
     def search_vacancies(self, keyword, quantity=15):
-        """Подключаемся к API SuperJob"""
+        """Подключение к API SuperJob"""
 
         params = {
             "keyword": keyword,  # Ключевое слово
-            "count": quantity,  # Количество вакансий для вывода
-            "town": "Москва"
+            "count": quantity  # Количество вакансий для вывода
         }
 
         headers = {"X-Api-App-Id": self.api_key}
@@ -98,28 +108,24 @@ class SuperJobAPI(API):
         for vacancy in vacancies:
             title = vacancy.get("profession")
             vacancy_url = vacancy.get("link")
+            vacancy_id = vacancy.get("id")
             company_name = vacancy.get("client").get("title")
             work_place = vacancy.get("town").get("title")
             salary_from = vacancy.get("payment_from") if not None else 0
             salary_to = vacancy.get("payment_to") if not None else 0
             salary_currency = vacancy.get("currency")
             experience = vacancy.get("experience").get("title")
+            description = vacancy.get("candidat")
 
-            vac = Vacancy(title, vacancy_url, company_name, work_place,
-                          salary_from, salary_to, salary_currency, experience)
-            print(vac)
+            vac = Vacancy(title, vacancy_url, vacancy_id, company_name, work_place,
+                          salary_from, salary_to, salary_currency, experience, description)
             print("----------------------------------------------------------------------------------------------")
-
-
-if __name__ == '__main__':
-    print("--------------------------------------------HeadHunter--------------------------------------------------")
-    hh_example = HeadHunterAPI()
-
-    hh_example.get_vacancy_info(hh_example.search_vacancies("Python Developer Москва", 10))
-
-    print()
-    print("---------------------------------------------SuperJob---------------------------------------------------")
-
-    sj_example = SuperJobAPI()
-
-    sj_example.get_vacancy_info(sj_example.search_vacancies("postgresql Москва", 10))
+            print(vac)
+            user_answer = input("Добавить вакансию? (ДА/НЕТ) ").lower()
+            if user_answer == "да" or user_answer == "yes" or user_answer == "lf":
+                my_object = JSONSaver()
+                my_object.add_vacancy(vac.info)
+            elif user_answer == "стоп" or user_answer == "stop":
+                break
+            else:
+                continue
