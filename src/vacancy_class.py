@@ -2,7 +2,7 @@ class Vacancy:
     """Класс для работы с каждой отдельной вакансией из полученного списка с HeadHunter и SuperJob"""
 
     def __init__(self, title: str, vacancy_url: str, vacancy_id: int, company_name: str, work_place: str,
-                 salary_from: int, salary_to: int, salary_currency: str, experience: str, description: str) -> None:
+                 salary_from: int, salary_to: int, salary_currency: str, experience: str) -> None:
         self.title = title
         self.vacancy_url = vacancy_url
         self.vacancy_id = vacancy_id
@@ -12,13 +12,11 @@ class Vacancy:
         self.salary_to = salary_to
         self.salary_currency = salary_currency
         self.experience = experience
-        self.description = description
 
         self.info = dict(title=self.title, vacancy_url=self.vacancy_url, vacancy_id=self.vacancy_id,
                          company_name=self.company_name, work_place=self.work_place,
                          salary_from=self.salary_from, salary_to=self.salary_to,
-                         salary_currency=self.salary_currency, experience=self.experience,
-                         description=self.description)
+                         salary_currency=self.salary_currency, experience=self.experience)
 
     def __str__(self):
         """Возвращает строковое представление объекта."""
@@ -28,14 +26,13 @@ class Vacancy:
                f"Компания: {self.company_name}\n" \
                f"Место работы: {self.work_place}\n" \
                f"Зарплата: {self.salary_from} - {self.salary_to} {self.salary_currency}\n" \
-               f"Опыт: {self.experience},\n" \
-               f"Описание: {self.description}"
+               f"Опыт: {self.experience}"
 
     def __repr__(self):
         """ Возвращает читаемое строковое представление объекта класса."""
         return f"{self.__class__.__name__}('{self.title}', {self.vacancy_url}, {self.vacancy_id}, " \
                f"{self.company_name}, {self.work_place}, {self.experience}, " \
-               f"{self.salary_from}, {self.salary_to}, {self.salary_currency}, {self.description})"
+               f"{self.salary_from}, {self.salary_to}, {self.salary_currency})"
 
     def __eq__(self, other):
         """Проверяет, равны ли объект self и объект other по значению атрибута 'salary_from'."""

@@ -61,7 +61,7 @@ def main():
     """
 
     vacancy = Vacancy("Python Developer", "https://ya.ru", 14091996, "Yandex", "Москва",
-                      100_000, 200_000, "RUB", "от 3 лет", "иди работай")
+                      100_000, 200_000, "RUB", "от 3 лет")
     my_object.add_vacancy(vacancy.info)
     my_object.delete_vacancy(14091996)
 

@@ -63,10 +63,9 @@ class HeadHunterAPI(API):
 
             salary_currency = vacancy.get("salary").get("currency")
             experience = vacancy.get("experience").get("name")
-            description = vacancy.get("snippet").get("requirement")
 
             vac = Vacancy(title, vacancy_url, vacancy_id, company_name, work_place,
-                          salary_from, salary_to, salary_currency, experience, description)
+                          salary_from, salary_to, salary_currency, experience)
             print("----------------------------------------------------------------------------------------------")
             print(vac)
             user_answer = input("Добавить вакансию? (ДА/НЕТ) ").lower()
@@ -115,10 +114,9 @@ class SuperJobAPI(API):
             salary_to = vacancy.get("payment_to") if not None else 0
             salary_currency = vacancy.get("currency")
             experience = vacancy.get("experience").get("title")
-            description = vacancy.get("candidat")
 
             vac = Vacancy(title, vacancy_url, vacancy_id, company_name, work_place,
-                          salary_from, salary_to, salary_currency, experience, description)
+                          salary_from, salary_to, salary_currency, experience)
             print("----------------------------------------------------------------------------------------------")
             print(vac)
             user_answer = input("Добавить вакансию? (ДА/НЕТ) ").lower()
