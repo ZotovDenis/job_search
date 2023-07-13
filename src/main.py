@@ -1,7 +1,6 @@
 from api_classes import HeadHunterAPI
 from api_classes import SuperJobAPI
 from json_saver_class import JSONSaver
-from vacancy_class import Vacancy
 
 
 def headhunter_vacancies_search():
@@ -9,8 +8,12 @@ def headhunter_vacancies_search():
     hh_api = HeadHunterAPI()
     search_query = input("Введите через пробел ключевые слова, в том числе город поиска: ")
     vacancy_quantity = input("Введите количество вакансий: ")
-    search_vacancies = hh_api.search_vacancies(search_query, vacancy_quantity)
-    hh_api.get_vacancy_info(search_vacancies)
+    if search_query != '' and vacancy_quantity != '' and vacancy_quantity.isdigit():
+        search_vacancies = hh_api.search_vacancies(search_query, vacancy_quantity)
+        hh_api.get_vacancy_info(search_vacancies)
+    else:
+        print("Введите требуемые значения.")
+        headhunter_vacancies_search()
 
 
 def superjob_vacancies_search():
@@ -18,8 +21,12 @@ def superjob_vacancies_search():
     superjob_api = SuperJobAPI()
     search_query = input("Введите через пробел ключевые слова, в том числе город поиска: ")
     vacancy_quantity = input("Введите количество вакансий: ")
-    search_vacancies = superjob_api.search_vacancies(search_query, vacancy_quantity)
-    superjob_api.get_vacancy_info(search_vacancies)
+    if search_query != '' and vacancy_quantity != '' and vacancy_quantity.isdigit():
+        search_vacancies = superjob_api.search_vacancies(search_query, vacancy_quantity)
+        superjob_api.get_vacancy_info(search_vacancies)
+    else:
+        print("Введите требуемые значения.")
+        superjob_vacancies_search()
 
 
 def get_top_vacancies(sorted_vacancies_list, n=1_000_000_000):
@@ -55,16 +62,6 @@ def main():
     if continue_search == "да" or continue_search == "yes" or continue_search == "lf":
         search()
 
-    """
-    Добавим произвольную вакансию в общий список вакансий (приведено для примера, что добавление вакансии с 
-    заполненными параметрами от руки также добавляется в общий список и метод удаления работает
-    """
-
-    vacancy = Vacancy("Python Developer", "https://ya.ru", 14091996, "Yandex", "Москва",
-                      100_000, 200_000, "RUB", "от 3 лет")
-    my_object.add_vacancy(vacancy.info)
-    my_object.delete_vacancy(14091996)
-
     salary_interval = input("Введите интервал зарплаты в формате 'XXXXX-YYYYY', где XXXXX-нижняя планка зарплаты, "
                             "YYYYY-верхняя планка зарплаты: ")
     my_list_by_salary = my_object.get_vacancies(salary_interval)
@@ -80,33 +77,33 @@ def main():
         return_sorted_vacancies(top_vacancies)
 
     while True:
-        result = input("Завершить работу или продолжить? (ЗАВЕРШИТЬ/ПРОДОЛЖИТЬ) ").lower()
+        result = input("Продолжить работу или завершить? (ПРОДОЛЖИТЬ/ЗАВЕРШИТЬ) ").lower()
         if result == "завершить" or result == "стоп":
             print("Программа завершена.")
             break
         if result == "продолжить" or result == "да":
             print("Выберите действие:\n"
                   "1. Произвести повторный поиск вакансий\n"
-                  "2. Вывести все вакансии из сохраненного отсортированного списка\n"
+                  "2. Вывести N вакансий из сохраненного отсортированного списка\n"
                   "3. Удалить вакансию")
 
-        continue_actions = input()
-        if continue_actions == "1":
-            search()
-        elif continue_actions == "2":
-            my_vacancies_list = my_object.get_vacancies()
-            sortd_list = sorted(my_vacancies_list, key=lambda x: x["salary_from"], reverse=True)
-            top_n = int(input("Введите количество вакансий для вывода в топ N: "))
-            top_vacancies = get_top_vacancies(sortd_list, top_n)
-            print("--------------------------------")
-            return_sorted_vacancies(top_vacancies)
-        elif continue_actions == "3":
-            del_vac = input("Введите ID вакансии, которую вы хотите удалить: ")
-            my_object.delete_vacancy(del_vac)
-            print("Вакансия удалена.")
-        elif continue_actions == "завершить" or result == "стоп":
-            print("Программа завершена.")
-            break
+            continue_actions = input()
+            if continue_actions == "1":
+                search()
+            elif continue_actions == "2":
+                my_vacancies_list = my_object.get_vacancies()
+                sortd_list = sorted(my_vacancies_list, key=lambda x: x["salary_from"], reverse=True)
+                top_n = int(input("Введите количество вакансий для вывода в топ N: "))
+                top_vacancies = get_top_vacancies(sortd_list, top_n)
+                print("--------------------------------")
+                return_sorted_vacancies(top_vacancies)
+            elif continue_actions == "3":
+                del_vac = input("Введите ID вакансии, которую вы хотите удалить: ")
+                my_object.delete_vacancy(del_vac)
+                print("Вакансия удалена.")
+            elif continue_actions == "завершить" or result == "стоп":
+                print("Программа завершена.")
+                break
 
 
 if __name__ == "__main__":
